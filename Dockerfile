@@ -17,6 +17,9 @@ LABEL maintainer="dwakeman@us.ibm.com"
 
 WORKDIR /home/node/app
 
+# Intentional error to stop the pipeline so that I can update the script and variables
+COPYYYY me.txt ./
+
 # Install the application
 COPY package*.json ./
 RUN npm install

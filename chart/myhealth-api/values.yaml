@@ -10,8 +10,8 @@ image:
   # for local development against Minikube registry
   #pullPolicy: Never    
 service:
-  name: myhealth-api-service
-  type: NodePort
+  name: myhealth-service
+  type: ClusterIP
   externalPort: 80
   internalPort: 8080
 ingress:
