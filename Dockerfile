@@ -12,30 +12,25 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-FROM node:alpine
+FROM registry.access.redhat.com/ubi8/nodejs-12
 LABEL maintainer="dwakeman@us.ibm.com"
 
-WORKDIR /home/node/app
+#WORKDIR /home/node/app
+WORKDIR /opt/app-root
 
 # Intentional error to stop the pipeline so that I can update the script and variables
-COPYYYY me.txt ./
+#COPYYYYY me.txt ./
 
 # Install the application
 COPY package*.json ./
 RUN npm install
 
-# Support to for arbitrary UserIds
-# https://docs.openshift.com/container-platform/3.11/creating_images/guidelines.html#openshift-specific-guidelines
-RUN chmod -R u+x /home/node/app && \
-    chgrp -R 0 /home/node/app && \
-    chmod -R g=u /home/node/app /etc/passwd
-
 # Copy the rest of the application content into the image
 ADD server ./server
 ADD public ./public
 
-# Using the "node" user provided in the node base image
-USER node
+# Using the user provided in the base image
+USER 1001
 
 # Define and expose the port on which the app will listen for requests
 ENV PORT 8080
