@@ -30,11 +30,11 @@ spec:
           livenessProbe:
             httpGet:
               path: /
-              port: {{ .Values.service.externalPort }}
+              port: {{ .Values.service.internalPort }}
           readinessProbe:
             httpGet:
               path: /
-              port: {{ .Values.service.externalPort }}
+              port: {{ .Values.service.internalPort }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
     {{- if .Values.nodeSelector }}
