@@ -320,6 +320,7 @@ EOF
       IP_ADDR=${KUBERNETES_MASTER_ADDRESS}
     fi
   fi  
-  export APP_URL=http://${IP_ADDR}:${PORT} # using 'export', the env var gets passed to next job in stage
+  #export APP_URL=http://${IP_ADDR}:${PORT} # using 'export', the env var gets passed to next job in stage
+  export APP_URL=http://${IMAGE_NAME}-${CLUSTER_NAMESPACE}.${CLUSTER_INGRESS_SUBDOMAIN} # using 'export', the env var gets passed to next job in stage
   echo -e "VIEW THE APPLICATION AT: ${APP_URL}"
 fi
