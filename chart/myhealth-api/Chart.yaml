@@ -1,4 +1,4 @@
 apiVersion: v1
-description: BFF API for the MyHealth application
-name: myhealth-api
+description: MyHealth application
+name: myhealth-app
 version: 1.0
