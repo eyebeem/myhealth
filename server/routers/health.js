@@ -6,7 +6,7 @@ module.exports = function(app, logger) {
   
   router.get('/', function (req, res, next) {
     logger.info("Reporting Health of the application");
-    res.json({status: 'Wakey says the service is UP'});
+    res.json({status: 'Dave says the service is UP'});
   });
 
   app.use("/health", router);
