@@ -15,7 +15,6 @@
 FROM registry.access.redhat.com/ubi8/nodejs-12
 LABEL maintainer="dwakeman@us.ibm.com"
 
-#WORKDIR /home/node/app
 WORKDIR /opt/app-root
 
 # Intentional error to stop the pipeline so that I can update the script and variables
@@ -30,7 +29,7 @@ ADD server ./server
 ADD public ./public
 
 # Using the user provided in the base image
-USER 1001
+#USER 1001
 
 # Define and expose the port on which the app will listen for requests
 ENV PORT 8080
