@@ -333,16 +333,16 @@ echo "APP_ENVIRONMENT=${APP_ENVIRONMENT}"
 
   # No app domain provided - use default route format
   if [ -z "$APP_DOMAIN" ]; then
-    export APP_URL=http://${IMAGE_NAME}-${CLUSTER_NAMESPACE}.${CLUSTER_INGRESS_SUBDOMAIN} 
+    TEMP_APP_URL="http://${IMAGE_NAME}-${CLUSTER_NAMESPACE}.${CLUSTER_INGRESS_SUBDOMAIN}"
   else # No app environment provided or app environment is production
     if [[ -z "$APP_ENVIRONMENT" || "$APP_ENVIRONMENT" == "prod" ]]; then
-      export APP_URL="https://${IMAGE_NAME}.${APP_DOMAIN}"
+      TEMP_APP_URL="https://${IMAGE_NAME}.${APP_DOMAIN}"
     else
-      export APP_URL="https://${IMAGE_NAME}.${APP_ENVIRONMENT}.${APP_DOMAIN}"
+      TEMP_APP_URL="https://${IMAGE_NAME}.${APP_ENVIRONMENT}.${APP_DOMAIN}"
     fi
   fi
 
-  #export APP_URL=http://${IP_ADDR}:${PORT} # using 'export', the env var gets passed to next job in stage
+  export APP_URL="${TEMP_APP_URL}" # using 'export', the env var gets passed to next job in stage
   #
 
   echo -e "VIEW THE APPLICATION AT: ${APP_URL}"
