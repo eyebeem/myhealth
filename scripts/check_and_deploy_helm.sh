@@ -32,6 +32,7 @@ echo "KUBERNETES_MASTER_ADDRESS=${KUBERNETES_MASTER_ADDRESS}"
 echo "KUBERNETES_MASTER_PORT=${KUBERNETES_MASTER_PORT}"
 echo "KUBERNETES_SERVICE_ACCOUNT_TOKEN=${KUBERNETES_SERVICE_ACCOUNT_TOKEN}"
 
+
 # View build properties
 if [ -f build.properties ]; then 
   echo "build.properties:"
@@ -320,7 +321,31 @@ EOF
       IP_ADDR=${KUBERNETES_MASTER_ADDRESS}
     fi
   fi  
+
+# If set:
+#   APP_DOMAIN: the custom domain for the application
+#   APP_ENVIRONMENT: the environment (used as a subdomain).  
+
+echo "Constructing Application URL"
+
+echo "APP_DOMAIN=${APP_DOMAIN}"
+echo "APP_ENVIRONMENT=${APP_ENVIRONMENT}"
+
+  # No app domain provided - use default route format
+  if [ -z "$APP_DOMAIN" ]; then
+    APP_HEALTH_URL=http://${IMAGE_NAME}-${CLUSTER_NAMESPACE}.${CLUSTER_INGRESS_SUBDOMAIN} 
+  fi
+
+  # No app environment provided or app environment is production
+  if [ -z "$APP_ENVIRONMENT" || "$APP_ENVIRONMENT" == "prod" ]; then
+    APP_HEALTH_URL="https://${IMAGE_NAME}.${APP_DOMAIN}"
+  else
+    APP_HEALTH_URL="https://${IMAGE_NAME}.${APP_ENVIRONMENT}.${APP_DOMAIN}"
+  fi
+
+
   #export APP_URL=http://${IP_ADDR}:${PORT} # using 'export', the env var gets passed to next job in stage
-  export APP_URL=http://${IMAGE_NAME}-${CLUSTER_NAMESPACE}.${CLUSTER_INGRESS_SUBDOMAIN} # using 'export', the env var gets passed to next job in stage
+  #
+  export APP_URL=${APP_HEALTH_URL}
   echo -e "VIEW THE APPLICATION AT: ${APP_URL}"
 fi
