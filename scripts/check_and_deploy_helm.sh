@@ -335,7 +335,7 @@ echo "APP_ENVIRONMENT=${APP_ENVIRONMENT}"
   if [ -z "$APP_DOMAIN" ]; then
     export APP_URL=http://${IMAGE_NAME}-${CLUSTER_NAMESPACE}.${CLUSTER_INGRESS_SUBDOMAIN} 
   else # No app environment provided or app environment is production
-    if [ -z "$APP_ENVIRONMENT" || "$APP_ENVIRONMENT" == "prod" ]; then
+    if [[ -z "$APP_ENVIRONMENT" || "$APP_ENVIRONMENT" == "prod" ]]; then
       export APP_URL="https://${IMAGE_NAME}.${APP_DOMAIN}"
     else
       export APP_URL="https://${IMAGE_NAME}.${APP_ENVIRONMENT}.${APP_DOMAIN}"
