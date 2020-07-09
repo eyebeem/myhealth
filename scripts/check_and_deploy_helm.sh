@@ -326,24 +326,23 @@ EOF
 #   APP_DOMAIN: the custom domain for the application
 #   APP_ENVIRONMENT: the environment (used as a subdomain).  
 
-echo "Constructing Application URL"
+#echo "Constructing Application URL"
 
-echo "APP_DOMAIN=${APP_DOMAIN}"
-echo "APP_ENVIRONMENT=${APP_ENVIRONMENT}"
+#echo "APP_DOMAIN=${APP_DOMAIN}"
+#echo "APP_ENVIRONMENT=${APP_ENVIRONMENT}"
 
   # No app domain provided - use default route format
-  if [ -z "$APP_DOMAIN" ]; then
-    TEMP_APP_URL="http://${IMAGE_NAME}-${CLUSTER_NAMESPACE}.${CLUSTER_INGRESS_SUBDOMAIN}"
-  else # No app environment provided or app environment is production
-    if [[ -z "$APP_ENVIRONMENT" || "$APP_ENVIRONMENT" == "prod" ]]; then
-      TEMP_APP_URL="https://${IMAGE_NAME}.${APP_DOMAIN}"
-    else
-      TEMP_APP_URL="https://${IMAGE_NAME}.${APP_ENVIRONMENT}.${APP_DOMAIN}"
-    fi
-  fi
+#  if [ -z "$APP_DOMAIN" ]; then
+#    TEMP_APP_URL="http://${IMAGE_NAME}-${CLUSTER_NAMESPACE}.${CLUSTER_INGRESS_SUBDOMAIN}"
+#  else # No app environment provided or app environment is production
+#    if [[ -z "$APP_ENVIRONMENT" || "$APP_ENVIRONMENT" == "prod" ]]; then
+#      TEMP_APP_URL="https://${IMAGE_NAME}.${APP_DOMAIN}"
+#    else
+#      TEMP_APP_URL="https://${IMAGE_NAME}.${APP_ENVIRONMENT}.${APP_DOMAIN}"
+#    fi
+#  fi
 
-  export APP_URL="${TEMP_APP_URL}" # using 'export', the env var gets passed to next job in stage
-  #
+#  export APP_URL="${TEMP_APP_URL}" # using 'export', the env var gets passed to next job in stage
 
   echo -e "VIEW THE APPLICATION AT: ${APP_URL}"
 fi
