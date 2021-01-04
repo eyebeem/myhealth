@@ -33,6 +33,30 @@ echo "KUBERNETES_MASTER_PORT=${KUBERNETES_MASTER_PORT}"
 echo "KUBERNETES_SERVICE_ACCOUNT_TOKEN=${KUBERNETES_SERVICE_ACCOUNT_TOKEN}"
 
 
+# If set:
+#   APP_DOMAIN: the custom domain for the application
+#   APP_ENVIRONMENT: the environment (used as a subdomain).  
+
+echo "Constructing Application Hostname"
+
+echo "APP_DOMAIN=${APP_DOMAIN}"
+echo "APP_ENVIRONMENT=${APP_ENVIRONMENT}"
+
+  # No app domain provided - use default route format
+  if [ -z "$APP_DOMAIN" ]; then
+    TEMP_APP_HOSTNAME="${IMAGE_NAME}-${CLUSTER_NAMESPACE}.${CLUSTER_INGRESS_SUBDOMAIN}"
+  else # No app environment provided or app environment is production
+    if [[ -z "$APP_ENVIRONMENT" || "$APP_ENVIRONMENT" == "prod" ]]; then
+      TEMP_APP_HOSTNAME="${IMAGE_NAME}.${APP_DOMAIN}"
+    else
+      TEMP_APP_HOSTNAME="${IMAGE_NAME}.${APP_ENVIRONMENT}.${APP_DOMAIN}"
+    fi
+  fi
+
+  export APP_HOSTNAME="${TEMP_APP_HOSTNAME}" # using 'export', the env var gets passed to next job in stage
+
+
+
 # View build properties
 if [ -f build.properties ]; then 
   echo "build.properties:"
@@ -197,10 +221,10 @@ IMAGE_PULL_SECRET_NAME="ibmcloud-toolchain-${PIPELINE_TOOLCHAIN_ID}-${REGISTRY_U
 # DW: Updated commands to set the ingress hosts from ${APP_URL}
 # Using 'upgrade --install" for rolling updates. Note that subsequent updates will occur in the same namespace the release is currently deployed in, ignoring the explicit--namespace argument".
 echo -e "Dry run into: ${PIPELINE_KUBERNETES_CLUSTER_NAME}/${CLUSTER_NAMESPACE}."
-helm upgrade ${RELEASE_NAME} ${CHART_PATH} ${HELM_TLS_OPTION} --install --debug --dry-run --set image.repository=${IMAGE_REPOSITORY},image.tag=${IMAGE_TAG},image.pullSecret=${IMAGE_PULL_SECRET_NAME},ingress.hosts[0]=${APP_URL},ingress.tls[0].hosts={${APP_URL}} ${HELM_UPGRADE_EXTRA_ARGS} --namespace ${CLUSTER_NAMESPACE}
+helm upgrade ${RELEASE_NAME} ${CHART_PATH} ${HELM_TLS_OPTION} --install --debug --dry-run --set image.repository=${IMAGE_REPOSITORY},image.tag=${IMAGE_TAG},image.pullSecret=${IMAGE_PULL_SECRET_NAME},ingress.hosts[0]=${APP_HOSTNAME},ingress.tls[0].hosts={${APP_HOSTNAME}} ${HELM_UPGRADE_EXTRA_ARGS} --namespace ${CLUSTER_NAMESPACE}
 
 echo -e "Deploying into: ${PIPELINE_KUBERNETES_CLUSTER_NAME}/${CLUSTER_NAMESPACE}."
-helm upgrade ${RELEASE_NAME} ${CHART_PATH} ${HELM_TLS_OPTION} --install --set image.repository=${IMAGE_REPOSITORY},image.tag=${IMAGE_TAG},image.pullSecret=${IMAGE_PULL_SECRET_NAME},ingress.hosts[0]=${APP_URL},ingress.tls[0].hosts={${APP_URL}} ${HELM_UPGRADE_EXTRA_ARGS} --namespace ${CLUSTER_NAMESPACE}
+helm upgrade ${RELEASE_NAME} ${CHART_PATH} ${HELM_TLS_OPTION} --install --set image.repository=${IMAGE_REPOSITORY},image.tag=${IMAGE_TAG},image.pullSecret=${IMAGE_PULL_SECRET_NAME},ingress.hosts[0]=${APP_HOSTNAME},ingress.tls[0].hosts={${APP_HOSTNAME}} ${HELM_UPGRADE_EXTRA_ARGS} --namespace ${CLUSTER_NAMESPACE}
 
 
 echo "=========================================================="
@@ -345,5 +369,5 @@ EOF
 
 #  export APP_URL="${TEMP_APP_URL}" # using 'export', the env var gets passed to next job in stage
 
-  echo -e "VIEW THE APPLICATION AT: ${APP_URL}"
+  echo -e "VIEW THE APPLICATION AT: https://${APP_HOSTNAME}"
 fi
