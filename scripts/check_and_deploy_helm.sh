@@ -42,20 +42,21 @@ echo "Constructing Application Hostname"
 echo "APP_DOMAIN=${APP_DOMAIN}"
 echo "APP_ENVIRONMENT=${APP_ENVIRONMENT}"
 
-  # No app domain provided - use default route format
-  if [ -z "$APP_DOMAIN" ]; then
+# No app domain provided - use default route format
+if [ -z "$APP_DOMAIN" ]; then
     TEMP_APP_HOSTNAME="${IMAGE_NAME}-${CLUSTER_NAMESPACE}.${CLUSTER_INGRESS_SUBDOMAIN}"
-  else # No app environment provided or app environment is production
-    if [[ -z "$APP_ENVIRONMENT" || "$APP_ENVIRONMENT" == "prod" ]]; then
-      TEMP_APP_HOSTNAME="${IMAGE_NAME}.${APP_DOMAIN}"
-    else
-      TEMP_APP_HOSTNAME="${IMAGE_NAME}.${APP_ENVIRONMENT}.${APP_DOMAIN}"
-    fi
-  fi
+else # No app environment provided or app environment is production
+if [[ -z "$APP_ENVIRONMENT" || "$APP_ENVIRONMENT" == "prod" ]]; then
+    TEMP_APP_HOSTNAME="${IMAGE_NAME}.${APP_DOMAIN}"
+else
+    TEMP_APP_HOSTNAME="${IMAGE_NAME}.${APP_ENVIRONMENT}.${APP_DOMAIN}"
+fi
+fi
 
-  export APP_HOSTNAME="${TEMP_APP_HOSTNAME}" # using 'export', the env var gets passed to next job in stage
-
-
+export APP_HOSTNAME="${TEMP_APP_HOSTNAME}" # using 'export', the env var gets passed to next job in stage
+echo "APP_HOSTNAME=${APP_HOSTNAME}"
+export APP_URL="https://${APP_HOSTNAME}" # using 'export', the env var gets passed to next job in stage
+echo "APP_URL=${APP_URL}"
 
 # View build properties
 if [ -f build.properties ]; then 
@@ -369,5 +370,5 @@ EOF
 
 #  export APP_URL="${TEMP_APP_URL}" # using 'export', the env var gets passed to next job in stage
 
-  echo -e "VIEW THE APPLICATION AT: https://${APP_HOSTNAME}"
+  echo -e "VIEW THE APPLICATION AT: ${APP_URL}"
 fi

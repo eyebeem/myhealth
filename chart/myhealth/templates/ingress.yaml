@@ -27,6 +27,9 @@ spec:
     {{- end -}}
   {{- if .Values.ingress.tls }}
   tls:
-{{ toYaml .Values.ingress.tls | indent 4 }}
+    - secretName: {{ .Chart.Name}}-tls
+      hosts:
+      - {{ .Values.ingress.hosts[0]}}
+#{{ toYaml .Values.ingress.tls | indent 4 }}
   {{- end -}}
 {{- end -}}
