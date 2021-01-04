@@ -29,7 +29,6 @@ spec:
   tls:
     - secretName: {{ .Chart.Name}}-tls
       hosts:
-      - {{ .Values.ingress.hosts[0]}}
-#{{ toYaml .Values.ingress.tls | indent 4 }}
+{{ toYaml .Values.ingress.tls.hosts | indent 6 }}
   {{- end -}}
 {{- end -}}
